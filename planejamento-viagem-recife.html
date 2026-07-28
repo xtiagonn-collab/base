@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planejamento da Viagem — Recife 2027</title>
+<style>
+  :root{
+    --azul:#0b7ca6;
+    --azul-escuro:#075873;
+    --azul-claro:#eef7fb;
+    --cinza-linha:#fafafa;
+    --amarelo-bg:#fff8e6;
+    --amarelo-borda:#f0ad4e;
+    --amarelo-texto:#c77d00;
+    --texto:#2b2b2b;
+    --texto-suave:#5a5a5a;
+    --borda:#d8e6ec;
+    --sombra:0 2px 10px rgba(11,124,166,0.08);
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    font-family:Arial, Helvetica, sans-serif;
+    background:#f3f6f8;
+    color:var(--texto);
+    margin:0;
+    padding:0;
+  }
+
+  .page{
+    max-width:960px;
+    margin:0 auto;
+    padding:20px 16px 60px;
+  }
+
+  /* ===== Cabeçalho principal ===== */
+  .header-principal{
+    background:linear-gradient(135deg, var(--azul), var(--azul-escuro));
+    color:white;
+    border-radius:12px;
+    padding:28px 24px;
+    text-align:center;
+    margin-bottom:18px;
+    box-shadow:var(--sombra);
+  }
+  .header-principal h1{
+    margin:0 0 6px;
+    font-size:26px;
+  }
+  .header-principal p{
+    margin:0;
+    opacity:0.9;
+    font-size:15px;
+  }
+  .header-principal .datas{
+    display:inline-block;
+    margin-top:14px;
+    background:rgba(255,255,255,0.15);
+    padding:8px 16px;
+    border-radius:30px;
+    font-size:14px;
+    font-weight:bold;
+    letter-spacing:0.3px;
+  }
+
+  /* ===== Navegação por abas ===== */
+  .nav-abas{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    background:white;
+    border-radius:12px;
+    padding:8px;
+    box-shadow:var(--sombra);
+    margin-bottom:18px;
+    position:sticky;
+    top:10px;
+    z-index:10;
+  }
+  .aba-btn{
+    flex:1 1 auto;
+    min-width:120px;
+    border:none;
+    background:transparent;
+    color:var(--azul-escuro);
+    font-size:14px;
+    font-weight:bold;
+    padding:10px 12px;
+    border-radius:8px;
+    cursor:pointer;
+    transition:background 0.15s ease, color 0.15s ease;
+    text-align:center;
+  }
+  .aba-btn:hover{
+    background:var(--azul-claro);
+  }
+  .aba-btn.ativa{
+    background:var(--azul);
+    color:white;
+  }
+  .aba-btn:focus-visible{
+    outline:3px solid var(--azul-escuro);
+    outline-offset:2px;
+  }
+
+  /* ===== Painéis de conteúdo ===== */
+  .painel{
+    display:none;
+    animation:fadeIn 0.25s ease;
+  }
+  .painel.ativo{
+    display:block;
+  }
+  @keyframes fadeIn{
+    from{opacity:0; transform:translateY(4px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+
+  .card{
+    background:white;
+    border:1px solid var(--borda);
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:var(--sombra);
+    margin-bottom:18px;
+  }
+  .card-topo{
+    background:var(--azul);
+    color:white;
+    padding:16px 20px;
+    text-align:center;
+  }
+  .card-topo h2{
+    margin:0;
+    font-size:19px;
+  }
+  .card-topo p{
+    margin:6px 0 0;
+    font-size:14px;
+    opacity:0.9;
+  }
+  .card-corpo{
+    padding:20px;
+  }
+
+  h3.secao{
+    color:var(--azul);
+    border-bottom:2px solid var(--azul);
+    padding-bottom:6px;
+    font-size:16px;
+    margin:0 0 12px;
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:14.5px;
+  }
+  th{
+    text-align:left;
+    padding:10px;
+    background:var(--azul-claro);
+  }
+  td{
+    padding:9px 10px;
+  }
+  tr:nth-child(even) td{
+    background:var(--cinza-linha);
+  }
+  .subtotal td{
+    background:#d8eef7 !important;
+    font-weight:bold;
+  }
+  .valor{
+    text-align:right;
+  }
+
+  .resumo-box{
+    background:var(--azul);
+    color:white;
+    padding:18px 20px;
+    border-radius:10px;
+    margin-top:16px;
+  }
+  .resumo-box h3{
+    margin-top:0;
+    border:none;
+    color:white;
+    padding:0;
+  }
+  .resumo-box table td{
+    background:transparent;
+    color:white;
+    padding:7px 0;
+  }
+  .resumo-box .total-linha td{
+    font-size:22px;
+    font-weight:bold;
+    padding-top:14px;
+  }
+
+  .nota{
+    margin-top:16px;
+    font-size:12.5px;
+    color:var(--texto-suave);
+  }
+
+  .aviso{
+    background:var(--amarelo-bg);
+    border-left:6px solid var(--amarelo-borda);
+    border-radius:6px;
+    padding:16px 18px;
+    margin-top:16px;
+  }
+  .aviso h3{
+    margin:0 0 10px;
+    color:var(--amarelo-texto);
+    font-size:15.5px;
+    border:none;
+    padding:0;
+  }
+  .aviso p{
+    margin:0 0 8px;
+    line-height:1.6;
+    color:var(--texto);
+    font-size:14px;
+  }
+  .aviso p:last-child{margin-bottom:0;}
+
+  .info-box{
+    background:var(--azul-claro);
+    border-left:6px solid var(--azul);
+    border-radius:6px;
+    padding:16px 18px;
+  }
+  .info-box h3{
+    margin:0 0 10px;
+    border:none;
+    padding:0;
+    font-size:15.5px;
+  }
+  .info-box p{
+    margin:0;
+    line-height:1.7;
+    font-size:14px;
+  }
+
+  /* ===== Checklist ===== */
+  .item-check{
+    background:var(--azul-claro);
+    border-left:6px solid var(--azul);
+    border-radius:6px;
+    padding:14px 16px;
+    margin-bottom:12px;
+    cursor:pointer;
+    transition:opacity 0.15s ease;
+  }
+  .item-check:nth-child(even){
+    background:var(--cinza-linha);
+  }
+  .item-check.concluido{
+    opacity:0.55;
+  }
+  .item-check.concluido .item-titulo{
+    text-decoration:line-through;
+  }
+  .item-titulo{
+    font-size:17px;
+    font-weight:bold;
+    color:var(--azul-escuro);
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .caixa{
+    width:20px;
+    height:20px;
+    border:2px solid var(--azul);
+    border-radius:4px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    font-size:14px;
+    flex:0 0 auto;
+  }
+  .item-check.concluido .caixa{
+    background:var(--azul);
+  }
+  .item-desc{
+    margin:8px 0 0 30px;
+    color:#444;
+    line-height:1.6;
+    font-size:14px;
+  }
+
+  .progresso-wrap{
+    background:#e3edf1;
+    border-radius:20px;
+    height:10px;
+    overflow:hidden;
+    margin:12px 0 20px;
+  }
+  .progresso-barra{
+    background:var(--azul);
+    height:100%;
+    width:0%;
+    transition:width 0.3s ease;
+  }
+  .progresso-texto{
+    font-size:13px;
+    color:var(--texto-suave);
+    margin-bottom:4px;
+  }
+
+  .objetivo-box{
+    background:var(--azul);
+    color:white;
+    padding:16px 18px;
+    border-radius:8px;
+    margin-top:6px;
+  }
+  .objetivo-box h3{
+    margin-top:0;
+    border:none;
+    padding:0;
+    color:white;
+  }
+  .objetivo-box p{
+    margin-bottom:0;
+    line-height:1.6;
+  }
+
+  /* ===== Seletor Individual/Casal ===== */
+  .toggle-custos{
+    display:flex;
+    gap:8px;
+    margin-bottom:16px;
+  }
+  .toggle-btn{
+    flex:1;
+    padding:10px;
+    border:2px solid var(--azul);
+    background:white;
+    color:var(--azul);
+    border-radius:8px;
+    font-weight:bold;
+    cursor:pointer;
+    font-size:14px;
+  }
+  .toggle-btn.selecionado{
+    background:var(--azul);
+    color:white;
+  }
+  .bloco-custo{
+    display:none;
+  }
+  .bloco-custo.visivel{
+    display:block;
+  }
+
+  @media (max-width:600px){
+    .header-principal h1{font-size:21px;}
+    .aba-btn{font-size:12.5px; padding:9px 6px; min-width:auto;}
+    table{font-size:13px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="header-principal">
+    <h1>🌴 Planejamento da Viagem — Recife/PE</h1>
+    <p>Tudo o que vocês precisam para organizar a viagem em um só lugar</p>
+    <div class="datas">16/01/2027 a 27/01/2027 · 12 dias</div>
+  </div>
+
+  <nav class="nav-abas" aria-label="Navegação do planejamento">
+    <button class="aba-btn ativa" data-alvo="cronograma">📅 Cronograma</button>
+    <button class="aba-btn" data-alvo="custos">💰 Custos</button>
+    <button class="aba-btn" data-alvo="checklist">📝 Checklist</button>
+    <button class="aba-btn" data-alvo="info">ℹ️ Informações</button>
+  </nav>
+
+  <!-- ===================== CRONOGRAMA ===================== -->
+  <section id="cronograma" class="painel ativo">
+    <div class="card">
+      <div class="card-topo">
+        <h2>📅 Período da Viagem</h2>
+        <p>Cronograma completo da viagem</p>
+      </div>
+      <div class="card-corpo">
+
+        <h3 class="secao">🗓️ Programação</h3>
+        <table>
+          <tr><th>Etapa</th><th>Período</th></tr>
+          <tr><td>Período de Pregação</td><td><strong>16/01/2027 a 24/01/2027</strong></td></tr>
+          <tr><td>Passeio Pós-Pregação</td><td><strong>25/01/2027 a 27/01/2027</strong></td></tr>
+        </table>
+
+        <br>
+
+        <h3 class="secao">✈️ Informações dos Voos</h3>
+        <table>
+          <tr><th>Descrição</th><th>Data</th></tr>
+          <tr><td>Voo de Ida</td><td><strong>16/01/2027</strong></td></tr>
+          <tr><td>Voo de Volta</td><td><strong>27/01/2027</strong></td></tr>
+        </table>
+
+        <div class="resumo-box">
+          <h3>📌 Resumo</h3>
+          <table>
+            <tr><td>Período Completo</td><td class="valor"><strong>16/01/2027 a 27/01/2027</strong></td></tr>
+            <tr><td>Total da Viagem</td><td class="valor"><strong>12 dias</strong></td></tr>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CUSTOS ===================== -->
+  <section id="custos" class="painel">
+    <div class="card">
+      <div class="card-topo">
+        <h2>💰 Previsão de Custos da Viagem</h2>
+        <p>Recife – Pernambuco | 16/01/2027 a 27/01/2027</p>
+      </div>
+      <div class="card-corpo">
+
+        <div class="toggle-custos">
+          <button class="toggle-btn selecionado" data-custo="individual">👤 Por Pessoa</button>
+          <button class="toggle-btn" data-custo="casal">👫 Para o Casal</button>
+        </div>
+
+        <!-- ---- INDIVIDUAL ---- -->
+        <div class="bloco-custo visivel" id="custo-individual">
+
+          <h3 class="secao">✈️ Passagem Aérea</h3>
+          <table>
+            <tr><th>Descrição</th><th class="valor">Valor</th></tr>
+            <tr><td>Vitória ⇄ Recife (ida e volta)</td><td class="valor"><strong>R$ 1.500,00</strong></td></tr>
+          </table>
+
+          <br>
+
+          <h3 class="secao">🏨 Hospedagem e Alimentação</h3>
+          <table>
+            <tr><th>Item</th><th class="valor">Valor</th></tr>
+            <tr><td>Hotel (11 diárias)</td><td class="valor">R$ 2.200,00</td></tr>
+            <tr><td>Almoço (12 dias)</td><td class="valor">R$ 840,00</td></tr>
+            <tr><td>Jantar (12 dias)</td><td class="valor">R$ 1.200,00</td></tr>
+            <tr><td>Lanches</td><td class="valor">R$ 540,00</td></tr>
+            <tr><td>Passeios</td><td class="valor">R$ 1.000,00</td></tr>
+            <tr><td>Compras</td><td class="valor">R$ 500,00</td></tr>
+            <tr><td>Reserva para imprevistos</td><td class="valor">R$ 1.000,00</td></tr>
+            <tr class="subtotal"><td>Subtotal</td><td class="valor">R$ 7.280,00</td></tr>
+          </table>
+
+          <br>
+
+          <h3 class="secao">🚗 Aluguel de Carro</h3>
+          <p style="font-size:14px; color:var(--texto-suave); margin-top:-6px;">
+            Custos considerando <strong>4 pessoas</strong> dividindo o veículo.
+          </p>
+          <table>
+            <tr><th>Item</th><th class="valor">Valor</th></tr>
+            <tr><td>Aluguel do carro</td><td class="valor">R$ 540,00</td></tr>
+            <tr><td>Combustível</td><td class="valor">R$ 150,00</td></tr>
+            <tr><td>Pedágios</td><td class="valor">R$ 20,00</td></tr>
+            <tr><td>Estacionamentos</td><td class="valor">R$ 7,50</td></tr>
+            <tr class="subtotal"><td>Subtotal</td><td class="valor">R$ 717,50</td></tr>
+          </table>
+
+          <div class="resumo-box">
+            <h3>💵 Total Estimado por Pessoa</h3>
+            <table>
+              <tr><td>Passagem aérea</td><td class="valor">R$ 1.500,00</td></tr>
+              <tr><td>Hospedagem e alimentação</td><td class="valor">R$ 7.280,00</td></tr>
+              <tr><td>Aluguel de carro</td><td class="valor">R$ 717,50</td></tr>
+              <tr class="total-linha"><td>TOTAL</td><td class="valor">R$ 9.497,50</td></tr>
+            </table>
+          </div>
+
+          <p class="nota">* Valores aproximados e sujeitos a alterações. O aluguel do veículo considera a divisão das despesas entre quatro pessoas.</p>
+        </div>
+
+        <!-- ---- CASAL ---- -->
+        <div class="bloco-custo" id="custo-casal">
+
+          <h3 class="secao">✈️ Passagem Aérea</h3>
+          <table>
+            <tr><th>Descrição</th><th class="valor">Valor</th></tr>
+            <tr><td>Vitória ⇄ Recife (2 passagens - ida e volta)</td><td class="valor"><strong>R$ 3.000,00</strong></td></tr>
+          </table>
+
+          <br>
+
+          <h3 class="secao">🏨 Hospedagem e Alimentação</h3>
+          <table>
+            <tr><th>Item</th><th class="valor">Valor</th></tr>
+            <tr><td>Hotel (11 diárias)</td><td class="valor">R$ 2.200,00</td></tr>
+            <tr><td>Almoços (12 dias)</td><td class="valor">R$ 1.680,00</td></tr>
+            <tr><td>Jantares (12 dias)</td><td class="valor">R$ 2.400,00</td></tr>
+            <tr><td>Lanches</td><td class="valor">R$ 1.080,00</td></tr>
+            <tr><td>Passeios (Catamarã, museus, praias e bate-volta)</td><td class="valor">R$ 2.000,00</td></tr>
+            <tr><td>Compras (Artesanato e lembranças)</td><td class="valor">R$ 500,00</td></tr>
+            <tr><td>Reserva para imprevistos</td><td class="valor">R$ 500,00</td></tr>
+            <tr class="subtotal"><td>Subtotal</td><td class="valor">R$ 10.360,00</td></tr>
+          </table>
+
+          <br>
+
+          <h3 class="secao">🚗 Aluguel de Carro</h3>
+          <p style="font-size:14px; color:var(--texto-suave); margin-top:-6px;">
+            Custos do veículo considerando <strong>4 pessoas dividindo o carro</strong>.
+          </p>
+          <table>
+            <tr><th>Item</th><th class="valor">Valor</th></tr>
+            <tr><td>Aluguel do carro</td><td class="valor">R$ 1.080,00</td></tr>
+            <tr><td>Combustível</td><td class="valor">R$ 300,00</td></tr>
+            <tr><td>Pedágios</td><td class="valor">R$ 40,00</td></tr>
+            <tr><td>Estacionamentos</td><td class="valor">R$ 180,00</td></tr>
+            <tr class="subtotal"><td>Subtotal</td><td class="valor">R$ 1.600,00</td></tr>
+          </table>
+
+          <div class="resumo-box">
+            <h3>💵 Total Estimado para o Casal</h3>
+            <table>
+              <tr><td>Passagem aérea</td><td class="valor">R$ 3.000,00</td></tr>
+              <tr><td>Hospedagem e alimentação</td><td class="valor">R$ 10.360,00</td></tr>
+              <tr><td>Aluguel de carro</td><td class="valor">R$ 1.600,00</td></tr>
+              <tr class="total-linha"><td>TOTAL</td><td class="valor">R$ 14.960,00</td></tr>
+            </table>
+          </div>
+
+          <p class="nota">* Valores estimados para duas pessoas, sujeitos a alterações conforme disponibilidade e época da viagem. Os custos do veículo consideram a divisão entre quatro ocupantes.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CHECKLIST ===================== -->
+  <section id="checklist" class="painel">
+    <div class="card">
+      <div class="card-topo">
+        <h2>📝 Checklist de Preparação da Viagem</h2>
+        <p>Acompanhe o andamento dos preparativos</p>
+      </div>
+      <div class="card-corpo">
+
+        <div class="progresso-texto"><span id="progresso-label">0 de 4 concluídos</span></div>
+        <div class="progresso-wrap">
+          <div class="progresso-barra" id="barra-progresso"></div>
+        </div>
+
+        <div class="item-check" data-item>
+          <div class="item-titulo"><span class="caixa">✓</span> 💰 Guardar dinheiro</div>
+          <p class="item-desc">Temos <strong>6 meses</strong> para guardar dinheiro e reduzir ao máximo o uso do cartão de crédito durante a viagem.</p>
+        </div>
+
+        <div class="item-check" data-item>
+          <div class="item-titulo"><span class="caixa">✓</span> ✈️ Pesquisa de voos</div>
+          <p class="item-desc">Monitorar os preços regularmente e aproveitar promoções para comprar as passagens pelo menor valor possível.</p>
+        </div>
+
+        <div class="item-check" data-item>
+          <div class="item-titulo"><span class="caixa">✓</span> 🚗 Aluguel de carro</div>
+          <p class="item-desc">Pesquisar descontos oferecidos por cartões de crédito, bancos, programas de fidelidade e promoções das locadoras.</p>
+        </div>
+
+        <div class="item-check" data-item>
+          <div class="item-titulo"><span class="caixa">✓</span> 🏨 Pesquisar hotéis</div>
+          <p class="item-desc">Assim que Betel designar o território, pesquisar hotéis com boa localização, ótima avaliação e melhor custo-benefício.</p>
+        </div>
+
+        <div class="objetivo-box">
+          <h3>🎯 Objetivo</h3>
+          <p>Planejar a viagem com antecedência, aproveitar promoções, reduzir gastos e chegar ao período da viagem com tudo organizado.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== INFORMAÇÕES ===================== -->
+  <section id="info" class="painel">
+    <div class="card">
+      <div class="card-topo">
+        <h2>ℹ️ Informações Importantes</h2>
+        <p>Planejamento da viagem</p>
+      </div>
+      <div class="card-corpo">
+
+        <div class="info-box">
+          <h3>📅 Período da Viagem</h3>
+          <p>
+            A viagem está prevista para o período de <strong>16/01/2027 (sábado)</strong> a
+            <strong>27/01/2027 (quarta-feira)</strong>, totalizando <strong>12 dias</strong> e
+            <strong>11 noites</strong> em Recife, com saída e retorno por <strong>Vitória/ES</strong>.
+          </p>
+        </div>
+
+        <div class="aviso">
+          <h3>⚠️ Alta Temporada</h3>
+          <p>
+            Janeiro é considerado um período de <strong>alta temporada</strong>, devido às férias
+            escolares e ao verão no Nordeste. Por esse motivo, passagens aéreas, hospedagens e
+            aluguel de veículos costumam apresentar preços mais elevados.
+          </p>
+          <p>
+            <strong>Recomendação:</strong> realizar reservas e compras com antecedência para aumentar
+            as chances de encontrar melhores preços e maior disponibilidade.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  // Navegação entre abas
+  var abas = document.querySelectorAll('.aba-btn');
+  var paineis = document.querySelectorAll('.painel');
+
+  abas.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      abas.forEach(function(b){ b.classList.remove('ativa'); });
+      paineis.forEach(function(p){ p.classList.remove('ativo'); });
+
+      btn.classList.add('ativa');
+      document.getElementById(btn.getAttribute('data-alvo')).classList.add('ativo');
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+  });
+
+  // Alternância Individual / Casal nos custos
+  var toggleBtns = document.querySelectorAll('.toggle-btn');
+  toggleBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      toggleBtns.forEach(function(b){ b.classList.remove('selecionado'); });
+      document.querySelectorAll('.bloco-custo').forEach(function(b){ b.classList.remove('visivel'); });
+
+      btn.classList.add('selecionado');
+      document.getElementById('custo-' + btn.getAttribute('data-custo')).classList.add('visivel');
+    });
+  });
+
+  // Checklist interativo (estado em memória, válido durante a sessão)
+  var itens = document.querySelectorAll('[data-item]');
+  var barra = document.getElementById('barra-progresso');
+  var label = document.getElementById('progresso-label');
+
+  function atualizarProgresso(){
+    var total = itens.length;
+    var feitos = document.querySelectorAll('[data-item].concluido').length;
+    var pct = total ? Math.round((feitos/total)*100) : 0;
+    barra.style.width = pct + '%';
+    label.textContent = feitos + ' de ' + total + ' concluídos';
+  }
+
+  itens.forEach(function(item){
+    item.addEventListener('click', function(){
+      item.classList.toggle('concluido');
+      atualizarProgresso();
+    });
+  });
+
+  atualizarProgresso();
+</script>
+
+</body>
+</html>
