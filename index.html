@@ -776,7 +776,13 @@
       btn.classList.add('ativa');
       document.getElementById(btn.getAttribute('data-alvo')).classList.add('ativo');
       btn.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'});
-      window.scrollTo({top:0, behavior:'smooth'});
+
+      // Rola apenas até o topo do menu (não até o banner), para o
+      // conteúdo da aba ficar visível imediatamente, sem esconder atrás do hero.
+      var navTopo = document.querySelector('.nav-wrap').getBoundingClientRect().top + window.pageYOffset;
+      if (window.pageYOffset > navTopo) {
+        window.scrollTo({top:navTopo, behavior:'smooth'});
+      }
     });
   });
 
